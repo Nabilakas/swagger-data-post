@@ -1,0 +1,196 @@
+dq_checks:
+  - name: cms_duplication
+    stop_on_failure: true
+    sql_query: |
+      SELECT coalesce(SUM(duplicates_count), 0) AS total_duplicates_count
+      FROM (
+        SELECT id, siteid, COUNT(*) as duplicates_count
+        FROM prod.site_archive_post
+        WHERE siteid = siteid_value
+        GROUP BY id, siteid
+        HAVING COUNT(*) > 1
+      ) AS subquery;
+
+
+  - name: event_duplication
+    stop_on_failure: true
+    sql_query: |
+      SELECT coalesce(SUM(duplicates_count),0) AS total_duplicates_count
+      FROM (
+      SELECT Event_Category,event_name, Event_Action,postid, siteid, hits,date, COUNT(*) as duplicates_count
+      FROM prod.events
+      WHERE siteid = siteid_value
+      GROUP BY Event_Category, event_name,Event_Action,postid, siteid,hits,date
+      HAVING COUNT(*) > 1
+      ) AS subquery;
+
+  - name: pages_duplication
+    stop_on_failure: true
+    sql_query: |
+      SELECT coalesce(SUM(duplicates_count),0) AS total_duplicates_count
+      FROM (
+      SELECT   postid,siteid, date, COUNT(*) as duplicates_count
+      FROM prod.pages
+      WHERE siteid = siteid_value
+      GROUP BY   postid,siteid, date
+      HAVING COUNT(*) > 1
+      ) AS subquery;
+
+  - name: daily_total_duplication
+    stop_on_failure: true
+    sql_query: |
+      SELECT coalesce(SUM(duplicates_count),0) AS total_duplicates_count
+      FROM (
+      SELECT   siteid, date, COUNT(*) as duplicates_count
+      FROM prod.daily_totals
+      WHERE siteid = 3
+      GROUP BY   siteid, date
+      HAVING COUNT(*) > 1
+      ) AS subquery;
+
+  - name: articles_of_month_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.total_tendens_article_month_card_n_table_DQ(siteid_value);
+
+  - name: articles_of_ytd_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.total_tendens_article_ytd_card_n_table_DQ(siteid_value);
+
+  - name: category_clicks_chart_month_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_clicks_chart_month_DQ(siteid_value);
+
+  - name: category_clicks_chart_ytd_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_clicks_chart_ytd_DQ(siteid_value);
+      
+  - name: userneeds_clicks_chart_month_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_clicks_chart_month_DQ(siteid_value);
+
+  - name: userneeds_clicks_chart_ytd_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_clicks_chart_ytd_DQ(siteid_value);
+
+  - name: category_pageviews_chart_month_3_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_month_3_DQ(siteid_value);
+  
+  - name: category_pageviews_chart_month_4_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_month_4_DQ(siteid_value);
+  
+  - name: category_pageviews_chart_month_10_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_month_10_DQ(siteid_value);
+
+  - name: category_pageviews_chart_ytd_3_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_ytd_3_DQ(siteid_value);
+  
+  - name: category_pageviews_chart_ytd_4_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_ytd_4_DQ(siteid_value);
+  
+  - name: category_pageviews_chart_ytd_10_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_category_pageviews_chart_ytd_10_DQ(siteid_value);
+
+  - name: userneeds_pageviews_chart_month_3_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_month_3_DQ(siteid_value);
+  
+  - name: userneeds_pageviews_chart_month_4_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_month_4_DQ(siteid_value);
+
+  - name: userneeds_pageviews_chart_month_10_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_month_10_DQ(siteid_value);
+
+  - name: userneeds_pageviews_chart_ytd_3_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_ytd_3_DQ(siteid_value);
+  
+  - name: userneeds_pageviews_chart_ytd_4_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_ytd_4_DQ(siteid_value);
+
+  - name: userneeds_pageviews_chart_ytd_10_per
+    stop_on_failure: true
+    sql_query: |
+      call prod.tactical_userneeds_pageviews_chart_ytd_10_DQ(siteid_value);
+    
+
+  - name: article_n_month_article_card
+    stop_on_failure: true
+    sql_query: |
+      call prod.tendens_article_n_month_article_card_DQ(siteid_value);
+  
+  - name: article_n_ytd_article_card
+    stop_on_failure: true
+    sql_query: |
+      call prod.tendens_article_n_ytd_article_card_DQ(siteid_value);
+
+  - name: articles_zero_month_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles0_month_of_card_n_table_DQ(siteid_value);
+  
+  - name: articles_zero_week_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles0_week_of_card_n_table_DQ(siteid_value);
+
+  - name: articles_zero_ytd_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles0_ytd_of_card_n_table_DQ(siteid_value);
+  
+  - name: articles_one_month_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles1_month_of_card_n_table_DQ(siteid_value);
+
+  - name: articles_one_week_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles1_week_of_card_n_table_DQ(siteid_value);
+  
+  - name: articles_one_ytd_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles1_ytd_of_card_n_table_DQ(siteid_value);
+
+  - name: articles_two_month_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles2_month_of_card_n_table_DQ(siteid_value);
+
+  - name: articles_two_week_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles2_week_of_card_n_table_DQ(siteid_value);
+  
+  - name: articles_two_ytd_of_card_n_table
+    stop_on_failure: true
+    sql_query: |
+      call prod.articles2_ytd_of_card_n_table_DQ(siteid_value);
+      
